@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 
 // middleware
 
@@ -11,10 +12,73 @@ app.use(cors());
 app.use(express.json());
 
 //Database Connections
-const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_PASS}@cluster0.zsdqs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`; 
-
-console.log(uri)
+const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_PASS}@cluster0.zsdqs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+async function run() {
+    try {
+        await client.connect();
+        const database = client.db("Lapel-Pin");
+        const productCollection = database.collection("products");
+        const orderCollection = database.collection("myOrders");
+
+
+        // Craete and showing product
+        app.get('/products', async (req, res) => {
+
+            const cursor = productCollection.find({});
+            console.log(cursor)
+            const products = await cursor.toArray();
+            res.json(products);
+        })
+
+        app.post('/products', async (req, res) => {
+            console.log(req.body)
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.json(result)
+        });
+
+        //myOrder
+        app.get('/myOrder', async (req, res) => {
+            const cursor = orderCollection.find({});
+            const services = await cursor.toArray();
+            res.send(services);
+        })
+
+        app.post('/myOrder', async (req, res) => {
+            console.log(req.body)
+            const product = req.body;
+            const result = await orderCollection.insertOne(product);
+            res.json(result)
+        });
+
+        //single item
+
+        app.get('/myOrder/:email', async (req, res) => {
+            console.log(req.params.email);
+
+            const result = await orderCollection.find({ email: req.params.email }).toArray();
+            res.json(result);
+        })
+
+        //delete 
+
+        app.delete('/myOrder/:id', async (req, res) => {
+            console.log(req.params.id)
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.json(result);
+
+        })
+
+
+    } finally {
+        // await client.close();
+    }
+}
+run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send('Hello Doctors Portal!')
