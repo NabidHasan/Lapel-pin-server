@@ -22,7 +22,15 @@ async function run() {
         const productCollection = database.collection("products");
         const orderCollection = database.collection("myOrders");
         const userCollection = database.collection("users");
+        const reviewCollection = database.collection("reviews");
 
+        app.get('/reviews', async (req, res) => {
+
+            const cursor = reviewCollection.find({});
+            console.log(cursor)
+            const products = await cursor.toArray();
+            res.json(products);
+        })
 
         // Craete and showing product
         app.get('/products', async (req, res) => {
