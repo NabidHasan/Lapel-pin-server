@@ -24,6 +24,8 @@ async function run() {
         const userCollection = database.collection("users");
         const reviewCollection = database.collection("reviews");
 
+        //Create and showing reviews
+
         app.get('/reviews', async (req, res) => {
 
             const cursor = reviewCollection.find({});
@@ -39,7 +41,7 @@ async function run() {
             res.json(result)
         });
 
-        // Craete and showing product
+        // Create and showing product
         app.get('/products', async (req, res) => {
 
             const cursor = productCollection.find({});
