@@ -1,10 +1,11 @@
 const express = require('express')
-const app = express();
 const cors = require('cors');
-require('dotenv').config()
-const port = process.env.PORT || 5000;
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
+require('dotenv').config()
+const app = express();
+const port = process.env.PORT || 5000;
+
 
 // middleware
 
@@ -31,6 +32,7 @@ async function run() {
             const cursor = reviewCollection.find({});
             console.log(cursor)
             const products = await cursor.toArray();
+            console.log("products are here", products);
             res.json(products);
         })
 
