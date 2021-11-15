@@ -30,33 +30,31 @@ async function run() {
         app.get('/reviews', async (req, res) => {
 
             const cursor = reviewCollection.find({});
-            console.log(cursor)
+
             const products = await cursor.toArray();
-            console.log("products are here", products);
-            res.json(products);
+            res.send(products);
         })
 
         app.post('/reviews', async (req, res) => {
             console.log(req.body)
             const product = req.body;
             const result = await reviewCollection.insertOne(product);
-            res.json(result)
+            res.send(result)
         });
 
         // Create and showing product
         app.get('/products', async (req, res) => {
 
             const cursor = productCollection.find({});
-            console.log(cursor)
             const products = await cursor.toArray();
-            res.json(products);
+            res.send(products);
         })
 
         app.post('/products', async (req, res) => {
             console.log(req.body)
             const product = req.body;
             const result = await productCollection.insertOne(product);
-            res.json(result)
+            res.send(result)
         });
 
         //myOrder
@@ -70,7 +68,7 @@ async function run() {
             console.log(req.body)
             const product = req.body;
             const result = await orderCollection.insertOne(product);
-            res.json(result)
+            res.send(result)
         });
 
 
@@ -79,7 +77,7 @@ async function run() {
             const user = req.body;
             console.log(user);
             const result = await userCollection.insertOne(user);
-            res.json(result);
+            res.send(result);
         })
 
         app.put('/users', async (req, res) => {
@@ -89,7 +87,7 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = { $set: user };
             const result = await userCollection.updateOne(filter, updateDoc, options);
-            res.json(result)
+            res.send(result)
         })
 
         //single item
@@ -98,7 +96,7 @@ async function run() {
             console.log(req.params.email);
 
             const result = await orderCollection.find({ email: req.params.email }).toArray();
-            res.json(result);
+            res.send(result);
         })
 
 
@@ -110,7 +108,7 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
-            res.json(result);
+            res.send(result);
 
         })
 
@@ -121,7 +119,7 @@ async function run() {
             const filter = { email: user.email }
             const updateDoc = { $set: { role: 'admin' } };
             const result = await userCollection.updateOne(filter, updateDoc);
-            res.json(result);
+            res.send(result);
 
         })
 
@@ -134,7 +132,7 @@ async function run() {
             if (user?.role === 'admin') {
                 isAdmin = true;
             }
-            res.json({ admin: isAdmin })
+            res.send({ admin: isAdmin })
             //hlw
 
         })
