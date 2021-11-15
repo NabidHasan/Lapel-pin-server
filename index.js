@@ -32,6 +32,13 @@ async function run() {
             res.json(products);
         })
 
+        app.post('/reviews', async (req, res) => {
+            console.log(req.body)
+            const product = req.body;
+            const result = await reviewCollection.insertOne(product);
+            res.json(result)
+        });
+
         // Craete and showing product
         app.get('/products', async (req, res) => {
 
