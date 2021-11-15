@@ -21,6 +21,7 @@ async function run() {
         const database = client.db("Lapel-Pin");
         const productCollection = database.collection("products");
         const orderCollection = database.collection("myOrders");
+        const userCollection = database.collection("users");
 
 
         // Craete and showing product
@@ -53,6 +54,25 @@ async function run() {
             res.json(result)
         });
 
+
+        //Users
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const result = await userCollection.insertOne(user);
+            res.json(result);
+        })
+
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            console.log('put', user);
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.json(result)
+        })
+
         //single item
 
         app.get('/myOrder/:email', async (req, res) => {
@@ -62,6 +82,8 @@ async function run() {
             res.json(result);
         })
 
+
+
         //delete 
 
         app.delete('/myOrder/:id', async (req, res) => {
@@ -70,6 +92,31 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.json(result);
+
+        })
+
+
+        //Admin
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email }
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await userCollection.updateOne(filter, updateDoc);
+            res.json(result);
+
+        })
+
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email }
+            const user = await userCollection.findOne(query);
+            let isAdmin = false;
+
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin })
+
 
         })
 
