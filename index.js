@@ -133,13 +133,13 @@ async function run() {
                 isAdmin = true;
             }
             res.json({ admin: isAdmin })
-
+            //hlw
 
         })
 
 
     } finally {
-        // await client.close();
+        //. await client.close();
     }
 }
 run().catch(console.dir);
